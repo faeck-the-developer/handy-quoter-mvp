@@ -1,0 +1,18 @@
+{
+  "name": "handy-quoter-mvp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Clean-room reconstruction of the HandyQuoter frontend. Static evidence only; the operator holds no authorization for the original service.",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "scripts": {
+    "test": "node --test --experimental-strip-types test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^5.6.0"
+  }
+}

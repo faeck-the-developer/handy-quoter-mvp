@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# local artifacts — never commit
+*.log
+.DS_Store
+
+# REA evidence bundles are large and session-derived; keep them out of git.
+# The 92 MB handy_quoter_evidence.json MUST NOT be committed.
+*.evidence.json
+handy_quoter_evidence.json
+_hq-analysis/
