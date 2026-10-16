@@ -203,6 +203,30 @@ export interface NetworkDenyHandle {
   readonly coverage: readonly TransportCoverage[];
 }
 
+/** Marker attached to the process globals so installation is observable. */
+const NETWORK_DENY_MARKER = Symbol.for("handy-quoter.network-deny");
+
+type MarkedGlobal = typeof globalThis & { [NETWORK_DENY_MARKER]?: true };
+
+/**
+ * True when a network-deny guard is currently installed on the process globals.
+ *
+ * The test harness installs the guard automatically, so this lets tests assert
+ * the guard is active WITHOUT calling `installNetworkDeny()` themselves — which
+ * is the only way to verify automatic installation rather than self-installation.
+ */
+export function isNetworkDenyInstalled(): boolean {
+  return (globalThis as MarkedGlobal)[NETWORK_DENY_MARKER] === true;
+}
+
+function markInstalled(): void {
+  (globalThis as MarkedGlobal)[NETWORK_DENY_MARKER] = true;
+}
+
+function markUninstalled(): void {
+  delete (globalThis as MarkedGlobal)[NETWORK_DENY_MARKER];
+}
+
 type FetchLike = typeof fetch;
 type WebSocketLike = typeof WebSocket;
 
@@ -255,6 +279,7 @@ export function installNetworkDeny(): NetworkDenyHandle {
   }
 
   globalThis.fetch = guardedFetch;
+  markInstalled();
 
   const coverage = TRANSPORT_COVERAGE.map((entry) =>
     entry.transport === "globalThis.WebSocket"
@@ -268,6 +293,7 @@ export function installNetworkDeny(): NetworkDenyHandle {
       if (guardedWebSocket !== undefined) {
         globalThis.WebSocket = originalWebSocket;
       }
+      markUninstalled();
     },
     coverage,
   };
