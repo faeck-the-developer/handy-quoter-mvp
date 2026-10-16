@@ -131,6 +131,92 @@ test("client: an opt-in host still cannot override the production rejection", ()
 /* Guard interaction                                                          */
 /* -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- */
+/* Accepted-host policy — deterministic, no network                            */
+/* -------------------------------------------------------------------------- */
+
+test("policy: the accepted host set is loopback only", () => {
+  const accepted = ["http://localhost:54321", "http://127.0.0.1:54321", "http://127.9.9.9:54321", "http://[::1]:54321"];
+  for (const url of accepted) {
+    assert.doesNotThrow(() => createLocalSupabaseClient({ url, anonKey: LOCAL_KEY }), url);
+  }
+});
+
+test("policy: private LAN and unspecified addresses are rejected", () => {
+  const rejected = ["http://192.168.1.10:54321", "http://10.0.0.5:54321", "http://0.0.0.0:54321", "http://172.16.0.1:54321"];
+  for (const url of rejected) {
+    assert.throws(
+      () => createLocalSupabaseClient({ url, anonKey: LOCAL_KEY }),
+      (e: unknown) => e instanceof LocalEndpointError && e.code === "not-local",
+      url,
+    );
+  }
+});
+
+test("policy: hostname lookalikes and URL-parsing tricks are rejected", () => {
+  const tricks = [
+    "http://localhost.evil.com", // suffix confusion
+    "http://notlocalhost",
+    "http://127.0.0.1.evil.com",
+    "http://localhost@evil.com", // userinfo
+    "http://127.0.0.1@evil.com",
+    "http://evil.com#@localhost", // fragment
+    "http://evil.com/localhost", // path
+    "http://localhost:54321@evil.com",
+  ];
+  for (const url of tricks) {
+    assert.throws(
+      () => createLocalSupabaseClient({ url, anonKey: LOCAL_KEY }),
+      (e: unknown) => e instanceof LocalEndpointError && e.code === "not-local",
+      `expected ${url} to be rejected as not-local`,
+    );
+  }
+});
+
+test("policy: production host cannot be reached through any disguise", () => {
+  const disguised = [
+    `https://${PRODUCTION_SUPABASE_HOST}`,
+    `http://${PRODUCTION_SUPABASE_HOST}`,
+    `https://${PRODUCTION_SUPABASE_HOST}.evil.com`,
+    `https://evil.com/${PRODUCTION_SUPABASE_HOST}`,
+    // The dangerous userinfo direction: real host IS the production project.
+    `https://localhost@${PRODUCTION_SUPABASE_HOST}`,
+    `https://127.0.0.1@${PRODUCTION_SUPABASE_HOST}`,
+  ];
+  for (const url of disguised) {
+    assert.throws(
+      () => createLocalSupabaseClient({ url, anonKey: LOCAL_KEY }),
+      (e: unknown) => e instanceof LocalEndpointError,
+      `expected ${url} to be rejected`,
+    );
+  }
+});
+
+test("policy: production host as USERNAME with a local real host is safe", () => {
+  // URL parsing keeps the production host in the userinfo component, so the
+  // connection target is genuinely localhost. Accepting this is correct — and
+  // rejecting it would be the over-strict direction. The dangerous inverse
+  // (`https://localhost@production`) is covered above and IS rejected.
+  const harmless = [
+    `https://${PRODUCTION_SUPABASE_HOST}@localhost:54321`,
+    `https://${PRODUCTION_SUPABASE_HOST}@127.0.0.1:54321`,
+  ];
+  for (const url of harmless) {
+    assert.doesNotThrow(
+      () => createLocalSupabaseClient({ url, anonKey: LOCAL_KEY }),
+      `${url} resolves to a loopback host and must be allowed`,
+    );
+  }
+});
+
+test("policy: uppercase loopback is accepted", () => {
+  assert.doesNotThrow(() => createLocalSupabaseClient({ url: "http://LOCALHOST:54321", anonKey: LOCAL_KEY }));
+});
+
+test("policy: https loopback is accepted (local TLS stacks exist)", () => {
+  assert.doesNotThrow(() => createLocalSupabaseClient({ url: "https://127.0.0.1:54321", anonKey: LOCAL_KEY }));
+});
+
 test("client: the auto-installed guard is present while these tests run", () => {
   // The harness installs network-deny before any module loads; the client
   // factory must coexist with it rather than bypass it.

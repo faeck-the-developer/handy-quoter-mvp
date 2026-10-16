@@ -11,6 +11,7 @@ import {
   OBSERVED_INSERT_SHAPES,
   OBSERVED_STATUS_LITERALS,
   OBSERVED_TABLE_COUNT,
+  NUMERIC_WIRE_TYPE_INFERENCE,
   type ObservedRow,
   type ObservedTableName,
 } from "../src/db/contracts.ts";
@@ -68,6 +69,24 @@ test("contracts: insert shapes cover only tables with an observed write path", (
   }
 });
 
+test("contracts: the numeric wire-type claim is classified as an inference, not SEEN", () => {
+  assert.equal(NUMERIC_WIRE_TYPE_INFERENCE.classification, "INFERRED — not SEEN");
+  // The claim text must carry its own hedge, so it cannot be quoted out of context.
+  assert.match(NUMERIC_WIRE_TYPE_INFERENCE.claim, /HYPOTHESIS, not established/i);
+  assert.ok(NUMERIC_WIRE_TYPE_INFERENCE.basis.length > 0);
+  assert.ok(NUMERIC_WIRE_TYPE_INFERENCE.contradicting_evidence.length > 0);
+  assert.match(NUMERIC_WIRE_TYPE_INFERENCE.unresolved_by, /U-02/);
+});
+
+test("contracts: optional fields never assert SQL nullability", () => {
+  // `?` encodes incomplete coverage / partial projection, NOT nullability.
+  // `unknown` already includes null, so nothing is being claimed either way.
+  type Subtotal = ObservedRow<"quote_history">["subtotal"];
+  type _includesNull = Expect<Equal<null extends Subtotal ? true : false, true>>;
+  // And it is genuinely unconstrained beyond that.
+  type _stillUnknown = Expect<Equal<Subtotal, unknown>>;
+});
+
 test("contracts: observed status literals are a plain list, never a closed union", () => {
   // If this were typed as a closed union, consumers could exhaustively switch
   // and conclude the domain is complete. It is intentionally a readonly array
@@ -102,9 +121,18 @@ type _jobsOptional = Expect<Equal<JobsAcceptsEmpty, true>>;
 type LeadsAcceptsEmpty = EmptyObject extends ObservedRow<"leads"> ? true : false;
 type _leadsOptional = Expect<Equal<LeadsAcceptsEmpty, true>>;
 
-// CoercibleNumber must be exactly `number | string`, and optional at the row level.
+// The wire domain is NOT established, so subtotal must remain `unknown`.
+// If a future authorised source settles it, this assertion must change with
+// the evidence — it is a tripwire against silently re-narrowing the type.
 type SubtotalType = ObservedRow<"quote_history">["subtotal"];
-type _subtotal = Expect<Equal<SubtotalType, number | string | undefined>>;
+type _subtotalUnknown = Expect<Equal<SubtotalType, unknown>>;
+
+// Every quote_history numeric-looking field must likewise stay `unknown`.
+type TotalCostType = ObservedRow<"quote_history">["total_cost"];
+type _totalCostUnknown = Expect<Equal<TotalCostType, unknown>>;
+
+type AmountDueType = ObservedRow<"quote_history">["amount_due"];
+type _amountDueUnknown = Expect<Equal<AmountDueType, unknown>>;
 
 // Unobserved values must be `unknown`, forcing consumers to narrow.
 type TitleType = ObservedRow<"jobs">["title"];

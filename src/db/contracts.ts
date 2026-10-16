@@ -39,6 +39,32 @@
  */
 export type Unobserved = unknown;
 
+/**
+ * WHY EVERY FIELD IS OPTIONAL — read this before using these types.
+ *
+ * An optional marker here does **NOT** mean "this column is nullable in SQL".
+ * Nothing in a client artifact can establish SQL nullability: the bundle never
+ * contains DDL, and a `.select()` list says nothing about a NOT NULL
+ * constraint. A column typed `?` here is optional for two evidence-driven
+ * reasons that must not be conflated:
+ *
+ *   1. INCOMPLETE FIELD COVERAGE. The contract covers only columns the observed
+ *      client referenced. The real table almost certainly has more columns,
+ *      and this type cannot represent them.
+ *
+ *   2. PARTIAL PROJECTION SHAPE. A given `.select("…")` returned a subset of
+ *      the table. A column absent from one response does not mean it is absent
+ *      from the table, nor that it is NULL in that row.
+ *
+ * The VALUE TYPE remains `unknown` regardless, and at runtime the value may be
+ * `null`, a string, a number, a boolean, an array, or an object — nothing was
+ * observed. Treat `?` as "this project has not characterised this field", not
+ * as "the database permits NULL".
+ *
+ * Practical consequence: never generate a NOT NULL assertion, a required-field
+ * check, or an exhaustive field list from these types.
+ */
+
 /** Marker for "this contract covers only columns the client referenced". */
 export type ObservedContract<Row> = {
   readonly [K in keyof Row]?: Row[K];
@@ -133,24 +159,56 @@ export interface ProfilesObservedRow {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Numeric columns of quote_history.
+ * Numeric-looking columns of quote_history.
  *
- * EVIDENCE: the client applies
- *   `typeof x === "string" ? parseFloat(x) || 0 : x || 0`
- * to `subtotal`, `tax`, `totalCost` and `labor.totalCost`, so the client
- * demonstrably tolerates BOTH a string and a numeric value from the server.
- * That is a real observation about the wire contract, so `number | string` is
- * used instead of `unknown` for these four.
+ * ⚠️ THE WIRE DOMAIN IS **NOT ESTABLISHED**. These fields are typed `unknown`.
  *
- * `amount_paid` / `amount_due` are also reached through
- * `amount_due || total_cost || 0`, which is truthiness-based and therefore
- * equally consistent with either type.
+ * What the artifact DOES show (both observations are `SEEN`):
+ *
+ *  1. The quote editor coerces its own form state:
+ *       typeof r.subtotal === "string" ? parseFloat(r.subtotal) || 0 : r.subtotal || 0
+ *     where `r` is the editor's `quote` PROP. HTML `<input type="number">`
+ *     yields strings, so this is tolerance for CLIENT INPUT.
+ *
+ *  2. The database READ path performs arithmetic on these fields with NO
+ *     coercion at all:
+ *       reduce((c,u) => c + ((u.amount_due || 0) - (u.amount_paid || 0)), 0)
+ *     and maps rows into form state unchanged: `subtotal: _.subtotal`.
+ *
+ * Observation 2 points the OPPOSITE way from a `number | string` claim: if the
+ * server returned strings, that reduce would concatenate rather than subtract,
+ * and the client would be visibly broken. It is not broken, so the wire values
+ * are *consistent with* numbers.
+ *
+ * "Consistent with" is NOT "established". No column type, and no PostgREST
+ * numeric/string serialisation behaviour, was observed. An earlier draft of this
+ * file typed these as `number | string`, which asserted an exhaustive wire
+ * domain from a client-side coercion expression. That was an over-claim and has
+ * been reverted to `unknown`.
+ *
+ * Consumers must narrow before use. See `NUMERIC_WIRE_TYPE_INFERENCE` for the
+ * documented inference and its basis, so a future authorised source can settle
+ * it rather than re-deriving it.
  */
-export type CoercibleNumber = number | string;
+export const NUMERIC_WIRE_TYPE_INFERENCE = {
+  claim:
+    "HYPOTHESIS, not established: quote_history." +
+    "{subtotal,tax,total_cost,amount_paid,amount_due} are numeric on the wire",
+  classification: "INFERRED — not SEEN",
+  basis:
+    "The read path sums and subtracts these fields with no string coercion " +
+    "(`c + ((u.amount_due||0) - (u.amount_paid||0))`), which would concatenate " +
+    "if the values were strings. The client is not observed to be broken.",
+  contradicting_evidence:
+    "The quote editor coerces the same fields for its form state, proving the " +
+    "client tolerates strings — but that is input tolerance, not a wire claim.",
+  unresolved_by:
+    "Requires U-02 (DDL) or an authorised schema source, neither of which exists.",
+} as const;
 
 export interface QuoteHistoryObservedRow {
-  amount_due?: CoercibleNumber;
-  amount_paid?: CoercibleNumber;
+  amount_due?: Unobserved;
+  amount_paid?: Unobserved;
   created_at?: Unobserved;
   /** Join key into jobs. Relationship is INFERRED from a PostgREST alias. */
   job_id?: Unobserved;
@@ -162,9 +220,9 @@ export interface QuoteHistoryObservedRow {
   payment_status?: Unobserved;
   /** Receives the camelCase client quote object; structure UNKNOWN. */
   raw_quote?: Unobserved;
-  subtotal?: CoercibleNumber;
-  tax?: CoercibleNumber;
-  total_cost?: CoercibleNumber;
+  subtotal?: Unobserved;
+  tax?: Unobserved;
+  total_cost?: Unobserved;
   user_id?: Unobserved;
   /** Monotonic version observed in .order()/filters; value domain UNKNOWN. */
   version?: Unobserved;
