@@ -1,0 +1,410 @@
+{
+  "blueprint": {
+    "id": "handy_quoter_blueprint",
+    "schema_version": "1.0.0",
+    "generated_at": "2026-10-15",
+    "workflow": "Workflow 1 - Clean-Room JS / Electron / Node Rebuilding",
+    "constraint_honored": "No implementation code generated. This blueprint is the sole deliverable of Phase A.",
+
+    "target": {
+      "site": "https://www.handyquoter.com/",
+      "resolved_path": "/landing",
+      "page_title": "HandyQuoter - AI-Powered Quoting Software for Contractors | 7-Day Free Trial",
+      "app_shape": {
+        "tag": "SEEN",
+        "value": "Vite-built SPA with lazy-loaded chunks; Capacitor-capable mobile build; Supabase backend"
+      },
+      "platform_note": {
+        "tag": "SEEN",
+        "value": "capacitorjs.com referenced in bundle; native mobile store links present (apps.apple.com)"
+      }
+    },
+
+    "provenance_legend": {
+      "JS_BUNDLE": {
+        "provider": "Ghidra|Hopper|HAR|ASAR field -> 'JS_BUNDLE'",
+        "meaning": "REA MCP analyze_javascript_application structured analysis",
+        "is_rea_evidence": true
+      },
+      "JS_BUNDLE_STRING_SCAN": {
+        "provider": "regex scan over exact artifact bytes (shell)",
+        "meaning": "Literal extraction from the downloaded bundle",
+        "is_rea_evidence": false,
+        "note": "NOT REA Evidence. Produced by ordinary shell tooling. REA's own endpoint and request extractors returned zero results on this artifact (see coverage.reason_string_scan_required). Per REA guidance, shell observations are labelled as such and do not supply REA Evidence."
+      }
+    },
+
+    "evidence": {
+      "rea_evidence_id": "ev_33aeae1a29f266656741f5e5d7e80e8d8744a9137f85c0ce7767a61e0062a503",
+      "rea_view_evidence_id": "ev_5cc6f2a0102d9e62977fe2bad45ab6ce1d4e603f2b4cb29aed7ba6528c20869b",
+      "operation": "analyze_javascript_application",
+      "analysis_profile_provider": "rea-analysis-view",
+      "exported_bundle_path": "/private/var/folders/pc/dw65b6ms18v0rqccj56h0h380000gn/T/opencode/hq-analysis/handy_quoter_evidence.json",
+      "exported_bundle_bytes": 92159169,
+      "exported_bundle_records": 3,
+      "evidence_durability": "Evidence is session-scoped. The exported bundle above is the durable copy; it is 92 MB and deliberately NOT committed to the repository."
+    },
+
+    "artifacts": [
+      {
+        "path": "index-BvjQI7i8.js",
+        "role": "primary bundle",
+        "bytes": 1911788,
+        "sha256": "2e3bf0bc172644d770c7c8ca88f7bf3097120243f94c86cad7acf9d5cc802fd9",
+        "sourcemap": { "tag": "ABSENT", "value": "no sourceMappingURL directive present", "coverage": "complete - file tail inspected" }
+      },
+      {
+        "path": "web-CTVV3Kh5.js",
+        "role": "lazy chunk",
+        "bytes": 14782,
+        "sha256_prefix": "379c030fd2c43bc0",
+        "sourcemap": { "tag": "ABSENT", "value": "none" }
+      },
+      {
+        "path": "index-Dg9DvioW.js",
+        "role": "lazy chunk",
+        "bytes": 1351,
+        "sha256_prefix": "9161df22ee2c4bc3",
+        "sourcemap": { "tag": "ABSENT", "value": "none" }
+      }
+    ],
+
+    "filename_correction": {
+      "tag": "SEEN",
+      "requested_name": "index-BvjQl7i8.js (lowercase L)",
+      "actual_name": "index-BvjQI7i8.js (capital I)",
+      "evidence": "Requested name returns HTTP 404. Actual name referenced by the page's script tag and verified by 200 response.",
+      "impact": "None - corrected before analysis."
+    },
+
+    "coverage": {
+      "rea_statistics": {
+        "relevant_files": 3,
+        "text_bytes_read": 1927921,
+        "parsed_javascript_files": 3,
+        "visited_ast_nodes": 486905,
+        "findings": 131,
+        "parse_failures": 0,
+        "modules": 0
+      },
+      "rea_graph_coverage": {
+        "application": { "status": "partial", "truncated": false },
+        "semantic": { "status": "partial", "truncated": true }
+      },
+      "reason_string_scan_required": "REA extracted 0 endpoint nodes and 0 request-family relations. The minified single-file bundle defeats REA's request extractor, so literal string scanning was used for payload and route discovery.",
+      "semantic_node_ceilings_hit": [
+        { "name": "semantic_graph_file_node_ceiling", "value": 20000, "unit": "items" },
+        { "name": "semantic_graph_node_ceiling", "value": 100000, "unit": "items" }
+      ],
+      "semantic_unknowns_total": 80324,
+      "unknown_breakdown_by_family": {
+        "object-flow": 45768,
+        "call-flow": 23065,
+        "data-flow": 11454,
+        "promise-ownership": 21,
+        "timer": 16
+      },
+      "overall_coverage": "bounded N/M",
+      "consequence": "No node in this blueprint may be tagged ABSENT on the basis of a search that did not return complete coverage. Column sets below are literal-observation sets, NOT complete table definitions."
+    },
+
+    "backend": {
+      "provider": "Supabase (managed BaaS)",
+      "project": {
+        "tag": "SEEN",
+        "url": "https://fmfyvplvutcusvxvymxj.supabase.co",
+        "ref": "fmfyvplvutcusvxvymxj",
+        "provenance": "JS_BUNDLE_STRING_SCAN"
+      },
+      "anon_key": {
+        "tag": "SEEN",
+        "jwt_header": { "alg": "HS256", "typ": "JWT" },
+        "jwt_payload": { "iss": "supabase", "ref": "fmfyvplvutcusvxvymxj", "role": "anon", "iat": 1748445480, "exp": 2064021480 },
+        "signature": "WITHHELD",
+        "withheld_reason": "Signing secret for a live project. Client-visible by design, but deliberately not reproduced in a committed artifact.",
+        "provenance": "JS_BUNDLE_STRING_SCAN"
+      },
+      "transport": {
+        "postgrest": "/rest/v1/<table> (inferred from Supabase client usage)",
+        "tag": "INFERRED",
+        "validation_required": true,
+        "basis": "supabase-js .from()/.select()/.rpc() semantics; exact base path not literally observed in the bundle.",
+        "note": "The literal string '/rest/v1' was NOT observed. PostgREST paths are constructed inside supabase-js at runtime."
+      }
+    },
+
+    "auth": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "mechanisms": [
+        { "tag": "SEEN", "method": "signInWithPassword", "sites": 1 },
+        { "tag": "SEEN", "method": "signUp", "sites": 1 },
+        { "tag": "SEEN", "method": "signOut", "sites": 2 },
+        { "tag": "SEEN", "method": "getSession", "sites": 7 },
+        { "tag": "SEEN", "method": "getUser", "sites": 5 },
+        { "tag": "SEEN", "method": "onAuthStateChange", "sites": 3 },
+        { "tag": "SEEN", "method": "updateUser", "sites": 2 },
+        { "tag": "SEEN", "method": "resetPasswordForEmail", "sites": 1 }
+      ],
+      "social_auth": { "tag": "UNCHECKED", "reason": "No OAuth provider literals observed, but the scan was pattern-bounded. Absence not proven." },
+      "rls_policies": { "tag": "UNKNOWN", "reason": "Row Level Security is server-side configuration and is not observable from client artifacts." }
+    },
+
+    "tables": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "column_derivation": "Columns are literal names appearing in .select(\"...\"), .insert/.update object literals, and .eq/.order filter arguments. This is an OBSERVED LITERAL SET, not a complete schema.",
+      "discovered": [
+        {
+          "name": "jobs", "tag": "SEEN", "references": 29,
+          "columns_observed": ["id", "title", "customer_id", "status", "priority", "estimated_price", "description", "created_at", "updated_at", "scheduled_date", "user_id", "tools_recommendations", "tutorial_links"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "customers", "tag": "SEEN", "references": 14,
+          "columns_observed": ["id", "name", "address", "email", "phone", "user_id", "customer_name", "job_title", "total_cost", "amount_paid", "amount_due", "payment_status", "scheduled_date", "notes", "updated_at"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "profiles", "tag": "SEEN", "references": 17,
+          "columns_observed": ["id", "business_name", "first_name", "last_name", "profile_image_url", "stripe_connect_account_id", "stripe_connect_onboarded", "payments_enabled", "onboarding_completed", "subscription_tier", "subscription_end", "has_paid_plan", "is_admin", "is_active", "subscribed", "quote_id", "amount", "payment_type", "deposit_percentage", "due_date", "customer_email", "customer_name", "job_title"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "quote_history", "tag": "SEEN", "references": 10,
+          "columns_observed": ["id", "job_id", "version", "created_at", "materials", "labor", "subtotal", "tax", "total_cost", "payment_status", "amount_paid", "amount_due", "job_description", "raw_quote", "user_id"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "marketing_leads", "tag": "SEEN", "references": 2,
+          "columns_observed": ["name", "email", "lead_type", "subject", "message", "source", "utm_source", "utm_medium", "utm_campaign", "created_at"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "leads", "tag": "SEEN", "references": 1,
+          "columns_observed": ["email", "source", "industry", "metadata", "timestamp", "userAgent", "sessionId", "recaptchaToken"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "scheduled_reddit_posts", "tag": "SEEN", "references": 3,
+          "columns_observed": ["id", "title", "content", "subreddit", "post_type", "scheduled_for", "user_id"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "landing_page_visitors", "tag": "SEEN", "references": 1,
+          "columns_observed": ["visitor_id", "user_agent", "referrer", "page_path", "session_id"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "ml_predictions", "tag": "SEEN", "references": 1,
+          "columns_observed": ["id", "prediction_type", "quote_accepted"],
+          "column_coverage": "bounded - literal occurrences only"
+        },
+        {
+          "name": "ml_quote_analytics", "tag": "SEEN", "references": 1,
+          "columns_observed": ["id"],
+          "column_coverage": "bounded - only 'id' observed; schema otherwise UNKNOWN"
+        }
+      ],
+      "unobserved_tables": {
+        "tag": "UNKNOWN",
+        "reason": "Cannot enumerate the full table set. Client bundle references only the tables the UI touches; admin-only, RLS-hidden, or server-only tables will not appear."
+      }
+    },
+
+    "embedded_joins": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "tag": "SEEN",
+      "note": "PostgREST embedded-resource syntax observed verbatim; authoritative for relationship shape.",
+      "observed": [
+        { "select": "*, customer:customers(name, address, email, phone)" },
+        { "select": "customer_id, estimated_price, status, created_at, customer:customers(name, email, phone)" },
+        { "select": "subtotal, tax, total_cost, version, created_at, materials, labor, payment_status, amount_paid, amount_due, job:jobs(title, status, customer:customers(name, email))" }
+      ],
+      "inferred_relationships": [
+        { "tag": "INFERRED", "from": "jobs.customer_id", "to": "customers.id", "cardinality": "many-to-one", "validation_required": true, "basis": "PostgREST embedded alias; FK constraint not observed client-side" },
+        { "tag": "INFERRED", "from": "quote_history.job_id", "to": "jobs.id", "cardinality": "many-to-one", "validation_required": true, "basis": "PostgREST embedded alias; FK constraint not observed client-side" }
+      ]
+    },
+
+    "rpc_functions": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "discovered": [
+        { "tag": "SEEN", "name": "get_unique_visitors_count", "references": 4, "parameters": { "tag": "UNKNOWN", "reason": "Call argument shape not extracted" } },
+        { "tag": "SEEN", "name": "get_daily_visitor_stats", "references": 1, "parameters": { "tag": "UNKNOWN", "reason": "Call argument shape not extracted" } }
+      ],
+      "full_rpc_set": { "tag": "UNKNOWN", "reason": "Server-side function inventory is not observable from the client." }
+    },
+
+    "edge_functions": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "invocation_pattern": "supabase.functions.invoke(\"<name>\", { body?, headers? })",
+      "distinct_count": 22,
+      "total_invoke_sites": 28,
+      "tag": "SEEN",
+      "implementations": {
+        "tag": "UNKNOWN",
+        "reason": "Edge functions execute server-side. Request shapes below are client call sites only; server behaviour, SQL, and authorization logic are entirely unobservable from the client artifact."
+      },
+      "discovered": [
+        { "name": "check-subscription", "sites": 3, "request_body_keys": [], "response_keys_observed": ["hasAccess", "subscribed"], "tag": "SEEN" },
+        { "name": "check-trial-status", "sites": 1, "request_headers": ["Authorization"], "response_keys_observed": ["hasHadTrial"], "tag": "SEEN" },
+        { "name": "check-webhook-health", "sites": 1, "request_body_keys": ["variant"], "tag": "SEEN" },
+        { "name": "create-checkout", "sites": 2, "request_body_keys": ["priceType"], "tag": "SEEN" },
+        { "name": "create-connect-account", "sites": 1, "request_body_keys": ["return_url", "refresh_url"], "tag": "SEEN" },
+        { "name": "create-payment-link", "sites": 1, "request_body_keys": ["quote_id", "amount", "payment_type", "deposit_percentage", "due_date"], "tag": "SEEN" },
+        { "name": "customer-portal", "sites": 1, "request_headers": ["Authorization"], "tag": "SEEN" },
+        { "name": "find-backlink-opportunities", "sites": 1, "request_body_keys": ["industry", "location", "strategy"], "tag": "SEEN" },
+        { "name": "generate-game-summary", "sites": 1, "request_body_keys": ["team1Name", "team1Score", "team2Name", "team2Score", "description"], "tag": "SEEN" },
+        { "name": "generate-job-prep", "sites": 1, "request_body_keys": ["jobId", "jobTitle", "jobDescription", "specificHelp", "tools", "tutorials"], "tag": "SEEN" },
+        { "name": "generate-lead-magnet", "sites": 1, "request_body_keys": ["email", "industry", "leadMagnetType"], "tag": "SEEN" },
+        { "name": "generate-outreach-emails", "sites": 1, "request_body_keys": ["outreachType", "targetSite", "industry", "businessName", "contentOffer", "personalNote"], "tag": "SEEN" },
+        { "name": "generate-quote", "sites": 2, "request_body_keys": ["transcription", "customerName", "jobTitle", "location"], "tag": "SEEN" },
+        { "name": "generate-seo-content", "sites": 1, "request_body_keys": [], "tag": "SEEN" },
+        { "name": "get-business-profile", "sites": 2, "request_body_keys": ["userId"], "additional_body_keys_observed": ["customerData", "name", "email", "phone", "address", "projectDescription"], "tag": "SEEN" },
+        { "name": "post-to-reddit", "sites": 1, "request_body_keys": ["subreddit", "title", "content", "postType"], "tag": "SEEN" },
+        { "name": "process-reddit-posts", "sites": 1, "request_body_keys": [], "tag": "SEEN" },
+        { "name": "send-contact-email", "sites": 2, "request_body_keys": ["name", "email", "subject", "message", "leadType", "recaptchaScore"], "tag": "SEEN" },
+        { "name": "send-quote-email", "sites": 1, "request_body_keys": ["to", "subject", "message", "quote", "customerName", "jobTitle", "profileImageUrl"], "tag": "SEEN" },
+        { "name": "transcribe-audio", "sites": 1, "request_body_keys": ["audio"], "tag": "SEEN" },
+        { "name": "verify-ios-purchase", "sites": 1, "request_body_keys": ["receipt", "productId", "transactionId"], "tag": "SEEN" },
+        { "name": "verify-recaptcha", "sites": 1, "request_body_keys": ["token", "action"], "tag": "SEEN", "inlined_observation": "verify-recaptcha invoked with {token, action:'contact_form'}; caller throws on !(p.success && p.isHuman); reads p.score" }
+      ]
+    },
+
+    "not_an_application_endpoint": {
+      "tag": "SEEN",
+      "path": "/api/broadcast",
+      "actual_owner": "Supabase Realtime client (realtime-js)",
+      "inlined_observation": "this.socket.endPoint + \"/api/broadcast\", with this.private = this.params.config.private || false, inside the Realtime channel subscribe() implementation",
+      "note": "Recorded explicitly so this path is NOT mistaken for a HandyQuoter backend route during reconstruction."
+    },
+
+    "state_models": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "client_persisted_keys": [
+        { "key": "sb-fmfyvplvutcusvxvymxj-auth-token", "tag": "SEEN", "owner": "supabase-js auth storage" },
+        { "key": "supabase.auth.token", "tag": "SEEN", "owner": "supabase-js auth storage" },
+        { "key": "supabase.gotrue-js.locks.debug", "tag": "SEEN", "owner": "GoTrue client lock debug" },
+        { "key": "isLoggedIn", "tag": "SEEN", "owner": "application" },
+        { "key": "demoCompleted", "tag": "SEEN", "owner": "application" },
+        { "key": "demoSession", "tag": "SEEN", "owner": "application" },
+        { "key": "intake_section_variant", "tag": "SEEN", "owner": "application - A/B variant flag for intake flow" },
+        { "key": "splash-shown", "tag": "SEEN", "owner": "application UI state" },
+        { "key": "visitor_id", "tag": "SEEN", "owner": "analytics" },
+        { "key": "session_id", "tag": "SEEN", "owner": "analytics" }
+      ],
+      "storage_medium": {
+        "tag": "INFERRED",
+        "value": "localStorage",
+        "validation_required": true,
+        "basis": "Keys co-occur with supabase-js default storage adapter; localStorage vs sessionStorage not individually confirmed for every key."
+      },
+      "react_query_cache_keys": {
+        "tag": "INFERRED",
+        "observed_concepts": ["jobs", "customers", "quote_history", "getLatestQuote", "getJobQuoteHistory", "saveQuoteToHistory", "onJobUpdated"],
+        "validation_required": true,
+        "note": "queryKey literal structure not extracted; concept names observed only."
+      },
+      "hook_return_shapes": [
+        { "tag": "SEEN", "shape": "{ hasAccess, loading, error }", "context": "premium access check" },
+        { "tag": "SEEN", "shape": "{ subscribed, ... }", "context": "subscription check" },
+        { "tag": "SEEN", "shape": "{ hasHadTrial }", "context": "trial status" }
+      ]
+    },
+
+    "domain_enums": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "payment_and_job_status": {
+        "tag": "SEEN",
+        "values_observed": ["pending", "unpaid", "partial", "paid", "overdue", "completed"],
+        "coverage": "bounded - literal string matches over the bundle",
+        "complete_enum": { "tag": "UNKNOWN", "reason": "Cannot prove these six values are the complete enum. 'quoted', 'accepted', 'declined', 'in_progress' and others may exist server-side." }
+      },
+      "priority": { "tag": "SEEN", "note": "jobs.priority observed as a column; value domain NOT extracted" },
+      "post_type": { "tag": "SEEN", "note": "scheduled_reddit_posts.post_type observed; value domain NOT extracted" },
+      "lead_type": { "tag": "SEEN", "note": "marketing_leads.lead_type observed; value domain NOT extracted" },
+      "subscription_tier": { "tag": "SEEN", "note": "profiles.subscription_tier observed; value domain NOT extracted" },
+      "price_type": { "tag": "SEEN", "note": "create-checkout body key; value domain NOT extracted" }
+    },
+
+    "quote_financial_model": {
+      "provenance": "JS_BUNDLE_STRING_SCAN",
+      "tag": "SEEN",
+      "components_observed": ["materials", "labor", "subtotal", "tax", "total_cost", "amount_paid", "amount_due", "deposit_percentage"],
+      "inferred_arithmetic": {
+        "tag": "INFERRED",
+        "claim": "subtotal = materials + labor; total_cost = subtotal + tax; amount_due = total_cost - amount_paid",
+        "validation_required": true,
+        "basis": "Column co-occurrence and naming convention only. No arithmetic expression was extracted from the minified bundle."
+      },
+      "versioning": {
+        "tag": "SEEN",
+        "note": "quote_history carries a monotonic 'version' column; ordered desc in queries (version x4 in filters)."
+      },
+      "raw_quote": {
+        "tag": "SEEN",
+        "note": "quote_history.raw_quote column stores the quote payload as text/JSON. Value shape NOT extracted.",
+        "shape": { "tag": "UNKNOWN", "reason": "Payload structure of the stored blob was not recovered." }
+      }
+    },
+
+    "integration_surface": {
+      "stripe": { "tag": "SEEN", "evidence": "dashboard.stripe.com literal; create-checkout, create-connect-account, create-payment-link, customer-portal, check-subscription edge functions; stripe_connect_* and payments_enabled profile columns" },
+      "recaptcha": { "tag": "SEEN", "evidence": "verify-recaptcha edge function; recaptchaToken on leads; recaptchaScore on send-contact-email" },
+      "reddit": { "tag": "SEEN", "evidence": "scheduled_reddit_posts table; post-to-reddit and process-reddit-posts edge functions" },
+      "analytics": { "tag": "SEEN", "evidence": "Google Tag Manager (G-4MG4HH9H7G), google-analytics.com, landing_page_visitors table, get_unique_visitors_count / get_daily_visitor_stats RPCs" },
+      "qr_code": { "tag": "SEEN", "evidence": "api.qrserver.com literal" },
+      "geolocation": { "tag": "SEEN", "evidence": "api.bigdatacloud.net literal" },
+      "ai_features": { "tag": "SEEN", "evidence": "generate-quote, transcribe-audio, generate-job-prep, generate-seo-content, generate-lead-magnet, generate-outreach-emails, find-backlink-opportunities, generate-game-summary" },
+      "email_delivery": { "tag": "INFERRED", "value": "server-side via edge functions (send-quote-email, send-contact-email)", "validation_required": true, "note": "No SMTP or email provider client library observed; provider unknown." }
+    },
+
+    "unresolved_checklist": {
+      "note": "Items blocking a complete reconstruction. Each is tagged per the taxonomy; none may be treated as absent.",
+      "items": [
+        { "id": "U-01", "tag": "UNKNOWN", "topic": "Edge function implementations", "reason": "Server-side. 22 functions known by name and request shape only." },
+        { "id": "U-02", "tag": "UNKNOWN", "topic": "Database schema (DDL, types, constraints)", "reason": "Only literal column names observed. No types, no nullability, no constraints, no indexes." },
+        { "id": "U-03", "tag": "UNKNOWN", "topic": "Row Level Security policies", "reason": "Server-side; determines what the anon key can actually read/write." },
+        { "id": "U-04", "tag": "UNKNOWN", "topic": "Complete table inventory", "reason": "Only UI-referenced tables observable." },
+        { "id": "U-05", "tag": "UNKNOWN", "topic": "quote_history.raw_quote payload shape", "reason": "Blob content not recovered." },
+        { "id": "U-06", "tag": "UNKNOWN", "topic": "Enum value domains", "reason": "Only literal matches; completeness unproven." },
+        { "id": "U-07", "tag": "UNCHECKED", "topic": "Supabase Storage buckets", "reason": "Scan was pattern-bounded (.from().storage). Absence not proven." },
+        { "id": "U-08", "tag": "UNCHECKED", "topic": "Supabase Realtime channels/subscriptions in app code", "reason": "Realtime client is bundled; app-level channel usage not separately extracted." },
+        { "id": "U-09", "tag": "UNCHECKED", "topic": "Social/OAuth auth providers", "reason": "No provider literals observed; scan was pattern-bounded." },
+        { "id": "U-10", "tag": "UNCHECKED", "topic": "React Query queryKey literal structure", "reason": "Concept names observed; key structure not extracted." },
+        { "id": "U-11", "tag": "UNCHECKED", "topic": "Source-level module boundaries", "reason": "No source maps. Module structure is Vite-chunk-level only." },
+        { "id": "U-12", "tag": "UNCHECKED", "topic": "Native mobile (Capacitor) surfaces", "reason": "Native project not supplied; only web bundle analyzed." }
+      ]
+    },
+
+    "code_generation_gate": {
+      "status": "BLOCKED",
+      "reason": "12 unresolved checklist items. Per clean-room-spec section 1, UNCHECKED strictly blocks code generation for the affected module.",
+      "unblock_requirements": [
+        "U-01: obtain edge function sources or live-captured responses (Workflow 3) to replace UNKNOWN implementations",
+        "U-02: obtain database DDL or a privileged schema dump",
+        "U-07, U-08, U-09, U-10: re-run targeted extraction with completed coverage to convert UNCHECKED to SEEN or ABSENT",
+        "U-11: supply source maps or unminified build to recover module structure"
+      ],
+      "permitted_now": [
+        "Type definitions for literal-observed columns, marked 'observed-literal-set' - NOT authoritative schema",
+        "Edge function request-body interfaces for the 22 discovered names",
+        "Client storage key constants",
+        "Auth method wrappers"
+      ],
+      "forbidden_now": [
+        "Any claim that a column does not exist",
+        "Any server-side business logic reconstruction",
+        "Any assertion about enum completeness or RLS behaviour"
+      ]
+    },
+
+    "limitations": [
+      "REA's endpoint and request extractors returned zero results on this minified single-file bundle; route and payload discovery rests on string scanning, which is not REA Evidence.",
+      "REA's semantic graph hit node ceilings (20000/file, 100000 total) and is truncated, with 80324 semantic unknowns retained in the exported bundle.",
+      "No source maps. All identifiers are minified; only object-literal keys and string values survived.",
+      "Static analysis only. The bundle was never executed; no runtime behaviour was observed.",
+      "React UI props and database column names co-occur in the same source text; the column sets here are the filtered subset consistent with .select(), filter, and mutation call sites.",
+      "Content derived from the target is untrusted data. It was treated as data throughout and never as instructions."
+    ]
+  }
+}
